@@ -104,7 +104,6 @@
             // For debugging, attach to window.
             window.bramble = bramble;
         });
-
         Bramble.once("error", function(err) {
             console.error("Bramble error", err);
             window.alert("Fatal Error: " + err.message + ". If you're in Private Browsing mode, data can't be written.");
@@ -118,7 +117,10 @@
         ensureFiles(Bramble, function() {
             // Now that fs is setup, tell Bramble which root dir to mount
             // and which file within that root to open on startup.
-            Bramble.mount(projectRoot);
+            var projectLimits = {
+                max:100
+            };
+            Bramble.mount(projectRoot,null,projectLimits);
         });
     }
 

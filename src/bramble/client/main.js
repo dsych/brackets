@@ -27,10 +27,11 @@ define([
     // Change this to filer vs. filer.min if you need to debug Filer
     "thirdparty/filer/dist/filer.min",
     "bramble/ChannelUtils",
-    "bramble/thirdparty/EventEmitter/EventEmitter.min",
+    "bramble/thirdparty/EventEmitter/EventEmitter",
     "bramble/client/StateManager",
-    "bramble/thirdparty/MessageChannel/message_channel"
-], function(Filer, ChannelUtils, EventEmitter, StateManager) {
+    "bramble/thirdparty/MessageChannel/message_channel",
+    "bramble/client/ProjectLimiter"
+], function(Filer, ChannelUtils, EventEmitter, StateManager,ProjectLimiter) {
     "use strict";
 
     // PROD URL for Bramble, which can be changed below
@@ -136,8 +137,11 @@ define([
         _instance = new BrambleProxy(div, options);
     };
 
+//my code 
+//var projectLimiter = new ProjectLimiter();
+
     // After calling Bramble.load(), Bramble.mount() specifies project root entry path info
-    Bramble.mount = function(root, filename) {
+    Bramble.mount = function(root, filename,projectLimits) {
         if (!filename) {
             debug("no filename passed to Bramble.mount()");
         }
@@ -146,7 +150,7 @@ define([
             setReadyState(Bramble.ERROR, new Error("Bramble.mount() called before Bramble.load()."));
             return;
         }
-
+        ProjectLimiter.initLimits(projectLimits);
         _instance.mount(root, filename);
     };
 

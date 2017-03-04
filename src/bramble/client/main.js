@@ -32,6 +32,7 @@ define([
     "bramble/client/ProjectStats",
     "bramble/thirdparty/MessageChannel/message_channel"
 ], function(Filer, ChannelUtils, EventEmitter, StateManager,ProjectStats) {
+
     "use strict";
 
     // PROD URL for Bramble, which can be changed below
@@ -155,6 +156,7 @@ define([
             _instance.mount(root, filename);
         });
         
+
     };
 
     /**
@@ -513,11 +515,19 @@ define([
 
             // With successful fs operations that create, update, delete, or rename files,
             // we also trigger events on the bramble instance.
-            function genericFileEventFn(type, filename, callback) {
+            function genericFileEventFn(type, filename,callback,oldSize) {
                 return function(err) {
                     if(!err) {
                         self.trigger(type, [filename]);
+
+                        //guard against subsequent call when tutorial is modified
+                        if(oldSize !== null){
+                            //check project limits and adjust them appropriately
+                            ProjectLimiter.checkLimits(filename,_fs,oldSize);
+                        }
                     }
+                    
+
                     callback(err);
                 };
             }
@@ -554,7 +564,13 @@ define([
                         return next();
                     }
 
-                    _fs.unlink(path, genericFileEventFn("fileDelete", path, next));
+                    //we need to get the old size of a file before it is deleted.
+                    _fs.stat(path,function(err_inner,stats){
+                        var oldSize = 0;
+                        if(!err_inner){ oldSize = stats.size;}
+
+                        _fs.unlink(path,genericFileEventFn("fileDelete", path, next,oldSize));
+                    });
                 }
 
                 // Delete files inside the directory and trigger a `fileDelete`
@@ -564,6 +580,7 @@ define([
                     }
 
                     shell.rm(directory, {recursive: true}, callback);
+
                 });
             }
 
@@ -653,15 +670,27 @@ define([
                 // Convert the passed ArrayBuffer back to a FilerBuffer
                 args[1] = new FilerBuffer(args[1]);
                 path = args[0];
-                wrappedCallback = genericFileEventFn("fileChange", path, callback);
-                _fs.writeFile.apply(_fs, args.concat(function(err) {
-                    // If the file written was tutorial.html, also fire an event for that
-                    if(!err && path === self.tutorialPath) {
-                        wrappedCallback = genericFileEventFn("tutorialAdded", path, wrappedCallback);
-                        _tutorialExists = true;
-                    }
-                    wrappedCallback(err);
-                }));
+
+                _fs.stat(path,function(err,stats){
+                    //old size for calculating deltas
+                     var oldSize = 0;
+                     if(!err){ oldSize = stats.size;}
+                     //new file us being created
+                     else{ ProjectLimiter.newFile(); }
+
+                    wrappedCallback = genericFileEventFn("fileChange", path, callback,oldSize);
+
+
+                    _fs.writeFile.apply(_fs, args.concat(function(err) {
+                        // If the file written was tutorial.html, also fire an event for that
+                        if(!err && path === self.tutorialPath) {
+                            wrappedCallback = genericFileEventFn("tutorialAdded", path, wrappedCallback);
+                            _tutorialExists = true;
+                        }
+                       // ProjectLimiter.checkLimits(path,_fs,oldSize);
+                        wrappedCallback(err);
+                    }));
+                });
                 break;
             case "rename":
                 // We need to check if the rename is happening on a file or a
@@ -707,14 +736,20 @@ define([
                 break;
             case "unlink":
                 path = args[0];
-                wrappedCallback = genericFileEventFn("fileDelete", args[0], callback);
-                _fs.unlink.apply(_fs, args.concat(function(err) {
-                    if(!err && path === self.tutorialPath) {
-                        wrappedCallback = genericFileEventFn("tutorialRemoved", path, wrappedCallback);
-                        _tutorialExists = false;
-                    }
-                    wrappedCallback(err);
-                }));
+                _fs.stat(path,function(err,stats){
+                    //old size for calculating deltas
+                    var oldSize = 0;
+                    if(!err){ oldSize = stats.size;}
+                    wrappedCallback = genericFileEventFn("fileDelete", args[0], callback,oldSize);
+
+                    _fs.unlink.apply(_fs, args.concat(function(err) {
+                        if(!err && path === self.tutorialPath) {
+                            wrappedCallback = genericFileEventFn("tutorialRemoved", path, wrappedCallback);
+                            _tutorialExists = false;
+                        }
+                        wrappedCallback(err);
+                    }));
+                });
                 break;
             case "readFile":
                 _fs.readFile.apply(_fs, args.concat(function(err, data) {
@@ -748,24 +783,37 @@ define([
                 options = args[1];
 
                 _fs.readdir(path, function(err, contents) {
-                    if(err) {
-                        // If the path was a file, immediately unlink
-                        // trigger the event, and call the callback
-                        if(err.code === "ENOTDIR") {
-                            return shell.rm(path, genericFileEventFn("fileDelete", path, callback));
+                    //we need both errors for validation.
+                    _fs.stat(path,function(err_inner,stats){
+                        var oldSize = 0;
+                        if(!err_inner){ oldSize = stats.size;}
+
+                        if(err) {
+                            var rc;
+                            // If the path was a file, immediately unlink
+                            // trigger the event, and call the callback
+                            if(err.code === "ENOTDIR") {
+                                
+                                //recalculate the size
+                                //ProjectLimiter.checkLimits(_root,_fs);
+                                rc = shell.rm(path, genericFileEventFn("fileDelete", path, callback,oldSize));
+                                return rc;
+                            }
+
+                            return callback(err);
                         }
 
-                        return callback(err);
-                    }
+                        // If the directory is empty or *should* be empty (in the
+                        // case of a non-recursive rm), call shell.rm immediately
+                        // without triggering a `fileDelete` event
+                        if(!contents || contents.length < 1 || !options.recursive) {
+                            return shell.rm(path, callback);   
+                        }
 
-                    // If the directory is empty or *should* be empty (in the
-                    // case of a non-recursive rm), call shell.rm immediately
-                    // without triggering a `fileDelete` event
-                    if(!contents || contents.length < 1 || !options.recursive) {
-                        return shell.rm(path, callback);
-                    }
-
-                    deleteDirectoryRecursively(path, callback);
+                        deleteDirectoryRecursively(path,callback);
+                
+                    });
+                    
                 });
 
                 break;

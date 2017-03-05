@@ -150,7 +150,7 @@ define([
             setReadyState(Bramble.ERROR, new Error("Bramble.mount() called before Bramble.load()."));
             return;
         }
-        ProjectLimiter.initMaxLimits(projectLimits);
+        ProjectLimiter.initMaxLimits(projectLimits,_fs);
         _instance.mount(root, filename);
     };
 
@@ -518,11 +518,11 @@ define([
                         //guard against subsequent call when tutorial is modified
                         if(oldSize !== null){
                             //check project limits and adjust them appropriately
-                            ProjectLimiter.checkLimits(filename,_fs,oldSize);
+                            ProjectLimiter.checkLimits(filename,oldSize);
                         }
                     }
                     
-
+                    
                     callback(err);
                 };
             }

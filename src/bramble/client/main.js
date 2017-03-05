@@ -516,7 +516,7 @@ define([
                         self.trigger(type, [filename]);
 
                         //guard against subsequent call when tutorial is modified
-                        if(oldSize !== null){
+                        if(typeof oldSize !== 'undefined'){
                             //check project limits and adjust them appropriately
                             ProjectLimiter.checkLimits(filename,oldSize);
                         }
@@ -560,9 +560,9 @@ define([
                     }
 
                     //we need to get the old size of a file before it is deleted.
-                    _fs.stat(path,function(err_inner,stats){
+                    _fs.stat(path,function(err,stats){
                         var oldSize = 0;
-                        if(!err_inner){ oldSize = stats.size;}
+                        if(!err){ oldSize = stats.size;}
 
                         _fs.unlink(path,genericFileEventFn("fileDelete", path, next,oldSize));
                     });
@@ -666,11 +666,11 @@ define([
                 args[1] = new FilerBuffer(args[1]);
                 path = args[0];
 
-                _fs.stat(path,function(err,stats){
+                _fs.stat(path,function(err_outer,stats){
                     //old size for calculating deltas
                      var oldSize = 0;
-                     if(!err){ oldSize = stats.size;}
-                     //new file us being created
+                     if(!err_outer){ oldSize = stats.size;}
+                     //new file is being created
                      else{ ProjectLimiter.newFile(); }
 
                     wrappedCallback = genericFileEventFn("fileChange", path, callback,oldSize);
@@ -731,10 +731,10 @@ define([
                 break;
             case "unlink":
                 path = args[0];
-                _fs.stat(path,function(err,stats){
+                _fs.stat(path,function(err_outer,stats){
                     //old size for calculating deltas
                     var oldSize = 0;
-                    if(!err){ oldSize = stats.size;}
+                    if(!err_outer){ oldSize = stats.size;}
                     wrappedCallback = genericFileEventFn("fileDelete", args[0], callback,oldSize);
 
                     _fs.unlink.apply(_fs, args.concat(function(err) {

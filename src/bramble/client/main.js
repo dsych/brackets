@@ -151,11 +151,9 @@ define([
             setReadyState(Bramble.ERROR, new Error("Bramble.mount() called before Bramble.load()."));
             return;
         }
-
         ProjectStats.init(root,function(err){
             _instance.mount(root, filename);
         });
-        
 
     };
 
@@ -523,11 +521,11 @@ define([
                         //guard against subsequent call when tutorial is modified
                         if(oldSize !== null){
                             //check project limits and adjust them appropriately
-                            ProjectLimiter.checkLimits(filename,_fs,oldSize);
+                            ProjectLimiter.checkLimits(filename,oldSize);
                         }
                     }
                     
-
+                    
                     callback(err);
                 };
             }

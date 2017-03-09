@@ -24,6 +24,11 @@ define([
     };
     // existance of index.html
     var _hasIndex = false;
+    function _checkIndex(pathname,newValue){
+        if(pathname === _Path.join(_root,"index.html")){
+            _hasIndex = newValue;
+        }
+    }
 
     //walk the whole file tree and count its size
     ProjectStats.init = function(root,callback){
@@ -37,7 +42,10 @@ define([
                 _projectInfo.size += stats.size;
                 _projectInfo.fileCount++;
             });
-
+            
+            //check for index.html
+            _checkIndex(path,true);
+            
             next();
         }
 
@@ -61,10 +69,8 @@ define([
     // overwrite unlink function to do the bookkeeping of project state and call original unlink.
     _fs.unlink = function(pathname, callback){
         
-        // file being deleted in index html
-        if(pathname === _Path.join(_root,"index.html")){
-            _hasIndex = false;
-        }
+        // file being deleted is index html
+        _checkIndex(pathname,false);
 
         _projectInfo.fileCount--;
         _fs.stat(pathname,function(err,stats){
@@ -88,10 +94,8 @@ define([
             _fs.stat(filename,function(err,stats){
                 if(err && err.code === "ENOENT"){ 
 
-                    // check if it index.html
-                    if(filename === _Path.join(_root,"index.html")){
-                        _hasIndex = true;
-                    }
+                    // check if it is index.html
+                    _checkIndex(filename,true);
 
                     _projectInfo.fileCount++; 
 

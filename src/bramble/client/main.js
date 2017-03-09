@@ -27,7 +27,7 @@ define([
     // Change this to filer vs. filer.min if you need to debug Filer
     "thirdparty/filer/dist/filer.min",
     "bramble/ChannelUtils",
-    "bramble/thirdparty/EventEmitter/EventEmitter.min",
+    "bramble/thirdparty/EventEmitter/EventEmitter",
     "bramble/client/StateManager",
     "bramble/client/ProjectStats",
     "bramble/thirdparty/MessageChannel/message_channel"
@@ -149,7 +149,6 @@ define([
         }
 
         ProjectStats.init(root,function(){});
-
         _instance.mount(root, filename);
     };
 

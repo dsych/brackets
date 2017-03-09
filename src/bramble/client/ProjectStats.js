@@ -34,7 +34,6 @@ define([
                 _cache[path] = stats.size;
             });
         
-            
             next();
         }
 
@@ -55,7 +54,6 @@ define([
     var _innerUnlink = _fs.unlink;
     // overwrite unlink function to do the bookkeeping of project state and call original unlink.
     _fs.unlink = function(pathname, callback){
-
         // call original Filer.unlink
         _innerUnlink.call(_fs, pathname, function(err){
             // only update cache once original was successful

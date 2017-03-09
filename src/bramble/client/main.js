@@ -29,9 +29,9 @@ define([
     "bramble/ChannelUtils",
     "bramble/thirdparty/EventEmitter/EventEmitter",
     "bramble/client/StateManager",
-    "bramble/thirdparty/MessageChannel/message_channel",
-    "bramble/client/ProjectLimiter"
-], function(Filer, ChannelUtils, EventEmitter, StateManager,ProjectLimiter) {
+    "bramble/client/ProjectStats",
+    "bramble/thirdparty/MessageChannel/message_channel"
+], function(Filer, ChannelUtils, EventEmitter, StateManager,ProjectStats) {
     "use strict";
 
     // PROD URL for Bramble, which can be changed below
@@ -111,7 +111,7 @@ define([
 
     // Expose Filer for Path, Buffer, providers, etc.
     Bramble.Filer = Filer;
-    var _fs = new Filer.FileSystem();
+    var _fs = ProjectStats.getFileSystem();
     Bramble.getFileSystem = function() {
         return _fs;
     };
@@ -150,8 +150,11 @@ define([
             setReadyState(Bramble.ERROR, new Error("Bramble.mount() called before Bramble.load()."));
             return;
         }
-        ProjectLimiter.initLimits(projectLimits);
-        _instance.mount(root, filename);
+
+        ProjectStats.init(root,function(err){
+            _instance.mount(root, filename);
+        });
+        
     };
 
     /**

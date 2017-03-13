@@ -39,6 +39,7 @@ define([
 
         // reinitialize project stats
         _root = root;
+        _cache = {};
 
         // walk the root
         _shell.find(_root, { exec:addSize }, function(err){

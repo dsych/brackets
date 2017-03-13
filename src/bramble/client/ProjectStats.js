@@ -22,7 +22,7 @@ define([
     // host cache in the object should any other project states have to be added
     var _cache = {};
 
-    //walk the whole file tree and count its size
+    // walk the whole file tree and count its size
     ProjectStats.init = function(root, callback){
         function addSize(path, next){
             // If the current path is a directory, record 0 for size
@@ -40,7 +40,7 @@ define([
         // reinitialize project stats
         _root = root;
 
-        //walk the root
+        // walk the root
         _shell.find(_root, { exec:addSize }, function(err){
             if(err) {
                return callback(err);

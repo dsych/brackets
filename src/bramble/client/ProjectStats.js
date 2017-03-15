@@ -14,10 +14,16 @@ define([
     var _cache = {};
 
     var _fs = new Filer.FileSystem();
+    var _shell = new _fs.Shell();
     ProjectStats.getFileSystem = function(){
         return _fs;
     };
-    var _shell = new _fs.Shell();
+    // NOTE: THIS WILL DESTROY DATA! For error cases only, or to wipe the disk.
+    ProjectStats.formatFileSystem = function(flags, callback){
+        _fs = new Filer.FileSystem(flags, callback);
+
+        return _fs;
+    };
 
     // walk the whole file tree and record each path and file size
     ProjectStats.init = function(root, callback){
@@ -46,7 +52,7 @@ define([
             if(err) {
                return callback(err);
             }
-            callback(null);
+            callback();
         });
 
     };
@@ -116,7 +122,7 @@ define([
     ProjectStats.getTotalProjectSize = function() {
         // Sum up all sizes in the cache and return
         if(_root){
-            (Object.values(_cache)).reduce(function(acc, val) {
+            return (Object.values(_cache)).reduce(function(acc, val) {
                 return acc + (val ? val : 0);
             });
         }
@@ -126,7 +132,7 @@ define([
     // returns project file count
     ProjectStats.getFileCount = function (){
         if(_root){
-            Object.keys(_cache).length;
+            return Object.keys(_cache).length;
         }
         return 0;
     };

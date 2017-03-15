@@ -116,9 +116,25 @@ define([
     Bramble.getFileSystem = function() {
         return _fs;
     };
+    
     // NOTE: THIS WILL DESTROY DATA! For error cases only, or to wipe the disk.
     Bramble.formatFileSystem = function(callback) {
-        _fs = new Filer.FileSystem({flags: ["FORMAT"]}, callback);
+        _fs = ProjectStats.formatFileSystem({flags: ["FORMAT"]}, callback);
+    };
+
+    // Return total project size
+    Bramble.getTotalProjectSize = function(){
+        return ProjectStats.getTotalProjectSize();
+    };
+
+    // Return true/false based on the existance of the index.html
+    Bramble.hasIndexFile =  function(){
+        return ProjectStats.hasIndexFile();
+    };
+
+    // Get the total filecount of a project
+    Bramble.getFileCount = function(){
+        return ProjectStats.getFileCount();
     };
 
     // Start loading Bramble's resources, setup communication with iframe
@@ -149,7 +165,7 @@ define([
             return;
         }
 
-        ProjectStats.init(root,function(err){
+        ProjectStats.init(root, function(err){
             if(err) {
                 // Deal with error case here, probably something like:
                 setReadyState(Bramble.ERROR, new Error("Unable to access filesystem: ", err));

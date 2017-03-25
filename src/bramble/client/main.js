@@ -27,7 +27,7 @@ define([
     // Change this to filer vs. filer.min if you need to debug Filer
     "thirdparty/filer/dist/filer.min",
     "bramble/ChannelUtils",
-    "bramble/thirdparty/EventEmitter/EventEmitter",
+    "bramble/thirdparty/EventEmitter/EventEmitter.min",
     "bramble/client/StateManager",
     "bramble/client/ProjectStats",
     "bramble/thirdparty/MessageChannel/message_channel"
@@ -167,7 +167,6 @@ define([
 
         ProjectStats.init(root, function(err){
             if(err) {
-                // Deal with error case here, probably something like:
                 setReadyState(Bramble.ERROR, new Error("Unable to access filesystem: ", err));
                 return;
             }

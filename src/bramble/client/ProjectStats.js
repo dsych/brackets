@@ -21,7 +21,8 @@ define([
     // NOTE: THIS WILL DESTROY DATA! For error cases only, or to wipe the disk.
     ProjectStats.formatFileSystem = function(flags, callback){
         _fs = new Filer.FileSystem(flags, callback);
-
+        _shell = new _fs.Shell();
+        
         return _fs;
     };
 

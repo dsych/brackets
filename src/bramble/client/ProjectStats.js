@@ -40,16 +40,7 @@ define([
                 _cache[path] = stats.size;
                 next();                
             });
-        
         }
-
-        // reinitialize project stats
-        _root = root;
-        _cache = {};
-
-        // walk the root
-        _shell.find(_root, { exec:addSize }, callback);
-
 
         // original unlink
         var _innerUnlink = _fs.unlink;
@@ -131,6 +122,12 @@ define([
             return Object.keys(_cache).length;
         };
 
+        // reinitialize project stats
+        _root = root;
+        _cache = {};
+
+        // walk the root
+        _shell.find(_root, { exec:addSize }, callback);
     };
 
     return ProjectStats;

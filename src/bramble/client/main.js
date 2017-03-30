@@ -122,21 +122,6 @@ define([
         _fs = ProjectStats.formatFileSystem({flags: ["FORMAT"]}, callback);
     };
 
-    // Return total project size
-    Bramble.getTotalProjectSize = function(){
-        return ProjectStats.getTotalProjectSize();
-    };
-
-    // Return true/false based on the existance of the index.html
-    Bramble.hasIndexFile =  function(){
-        return ProjectStats.hasIndexFile();
-    };
-
-    // Get the total filecount of a project
-    Bramble.getFileCount = function(){
-        return ProjectStats.getFileCount();
-    };
-
     // Start loading Bramble's resources, setup communication with iframe
     Bramble.load = function(div, options) {
         if (_instance) {
@@ -233,6 +218,9 @@ define([
         self.getAutoUpdate = function() { return _state.autoUpdate; };
         self.getTutorialExists = function() { return _tutorialExists; };
         self.getTutorialVisible = function() { return _tutorialVisible; };
+        self.getTotalProjectSize = function() { return ProjectStats.getTotalProjectSize(); };
+        self.hasIndexFile =  function() { return ProjectStats.hasIndexFile(); };
+        self.getFileCount = function() { return ProjectStats.getFileCount(); };
         self.getLayout = function() {
             return {
                 sidebarWidth: _state.sidebarWidth,

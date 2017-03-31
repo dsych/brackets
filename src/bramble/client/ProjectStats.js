@@ -1,7 +1,22 @@
+/* eslint
+space-before-function-paren: ["error", "never"],
+space-before-blocks: ["error", "never"],
+comma-spacing: "error",
+space-in-parens: "error",
+brace-style: "error",
+no-trailing-spaces: ["error", { "skipBlankLines": true }],
+no-unreachable: "error",
+no-whitespace-before-property: "error",
+semi-spacing: "error",
+"space-infix-ops": ["error", {"int32Hint": true}],
+no-unused-expressions: ["error", { "allowShortCircuit": true, "allowTernary": true }],
+no-console: "warn",
+"quotes": ["warn", "double"]
+*/
 define([
     // Change this to filer vs. filer.min if you need to debug Filer
     "thirdparty/filer/dist/filer.min",
-],function(Filer){
+], function(Filer){
     "use strict";
 
     var ProjectStats = {};
@@ -30,16 +45,16 @@ define([
     ProjectStats.init = function(root, callback){
         function addSize(path, next){
             // ignore directories and do nothing
-            if(path.endsWith("/")) {
+            if(path.endsWith("/")){
                 return next();
             }
 
-            _fs.stat(path,function(err, stats){
+            _fs.stat(path, function(err, stats){
                 if(err){
                     return next(err);
                 }
                 _cache[path] = stats.size;
-                next();                
+                next();
             });
         }
 
@@ -60,7 +75,7 @@ define([
         var _innerWriteFile = _fs.writeFile;
         // overwrite original writeFile and add bookkeeping of project state and call original writeFile.
         _fs.writeFile = function(filename, data, options, callback){
-            if(typeof options === "function") {
+            if(typeof options === "function"){
                 callback = options;
                 options = {};
             }
@@ -90,32 +105,32 @@ define([
         };
 
         // returns true/false depending on whether root/index.html exists
-        ProjectStats.hasIndexFile = function() {
+        ProjectStats.hasIndexFile = function(){
             if(!_root){
                 return false;
             }
 
             var index = _Path.join(_root, "index.html");
             // Loop through all paths, return true if one of them is root/index.html
-            return !!(Object.keys(_cache)).find(function(path) {
+            return !!(Object.keys(_cache)).find(function(path){
                 return path === index;
             });
         };
         
-        // returns bytes of files in the root   
-        ProjectStats.getTotalProjectSize = function() {
+        // returns bytes of files in the root
+        ProjectStats.getTotalProjectSize = function(){
             // Sum up all sizes in the cache and return
             if(!_root){
                 return 0;
             }
 
-            return (Object.values(_cache)).reduce(function(acc, val) {
+            return (Object.values(_cache)).reduce(function(acc, val){
                 return acc + (val ? val : 0);
             });
         };
 
         // returns project file count
-        ProjectStats.getFileCount = function (){
+        ProjectStats.getFileCount = function(){
             if(!_root){
                 return 0;
             }

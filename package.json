@@ -67,7 +67,8 @@
         "production": "npm start",
         "unlocalize": "grunt unlocalize",
         "test": "grunt test && grunt build-browser-compressed",
-        "start": "http-server -p 8000 --cors"
+        "start": "http-server -p 8000 --cors",
+        "prettier": "grunt prettierjs"
     },
     "license": "MIT"
 }

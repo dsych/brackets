@@ -23,44 +23,46 @@
 
 /*eslint-env node */
 /*jslint node: true */
-'use strict';
+"use strict";
 
-var Path = require('path');
-var LessPluginAutoPrefix = require('less-plugin-autoprefix');
+var Path = require("path");
+var LessPluginAutoPrefix = require("less-plugin-autoprefix");
 
-module.exports = function (grunt) {
-    var swPrecache = require('sw-precache');
+module.exports = function(grunt) {
+    var swPrecache = require("sw-precache");
 
     // load dependencies
-    require('load-grunt-tasks')(grunt, {
+    require("load-grunt-tasks")(grunt, {
         pattern: [
-            'grunt-*',
-            '!grunt-cli',
-            '!grunt-lib-phantomjs',
-            '!grunt-template-jasmine-requirejs',
-            'grunt-contrib-*',
-            'grunt-targethtml',
-            'grunt-usemin',
-            'grunt-cleanempty',
-            'grunt-exec'
+            "grunt-*",
+            "!grunt-cli",
+            "!grunt-lib-phantomjs",
+            "!grunt-template-jasmine-requirejs",
+            "grunt-contrib-*",
+            "grunt-targethtml",
+            "grunt-usemin",
+            "grunt-cleanempty",
+            "grunt-exec"
         ]
     });
 
-    grunt.loadTasks('tasks');
+    grunt.loadTasks("tasks");
 
     // Project configuration.
     grunt.initConfig({
-        pkg  : grunt.file.readJSON("package.json"),
+        pkg: grunt.file.readJSON("package.json"),
         clean: {
             dist: {
-                files: [{
-                    dot: true,
-                    src: [
-                        'dist',
-                        'src/.index.html',
-                        'src/styles/brackets.css'
-                    ]
-                }]
+                files: [
+                    {
+                        dot: true,
+                        src: [
+                            "dist",
+                            "src/.index.html",
+                            "src/styles/brackets.css"
+                        ]
+                    }
+                ]
             }
         },
         uglify: {
@@ -69,109 +71,119 @@ module.exports = function (grunt) {
                 compress: false
             },
             dist: {
-                files: [{
-                    expand: true,
-                    cwd: 'src/',
-                    src: [
-                        /* static files */
-                        'xorigin.js',
-                        'dependencies.js',
-                        'thirdparty/requirejs/require.js',
+                files: [
+                    {
+                        expand: true,
+                        cwd: "src/",
+                        src: [
+                            /* static files */
+                            "xorigin.js",
+                            "dependencies.js",
+                            "thirdparty/requirejs/require.js",
 
-                        /* extensions and CodeMirror modes */
-                        '!extensions/default/*/unittests.js',
-                        'extensions/default/*/**/*.js',
-                        '!extensions/extra/*/unittests.js',
-                        'extensions/extra/*/**/*.js',
-                        '!extensions/**/node_modules/**/*.js',
-                        '!extensions/**/test/**/*.js',
-                        '!**/unittest-files/**',
-                        'thirdparty/CodeMirror/addon/{,*/}*.js',
-                        'thirdparty/CodeMirror/keymap/{,*/}*.js',
-                        'thirdparty/CodeMirror/lib/{,*/}*.js',
-                        'thirdparty/CodeMirror/mode/{,*/}*.js',
-                        'thirdparty/CodeMirror/theme/{,*/}*.js',
-                        'thirdparty/slowparse/slowparse.js',
-                        'thirdparty/i18n/*.js',
-                        'thirdparty/text/*.js'
-                    ],
-                    dest: 'dist/'
-                }]
+                            /* extensions and CodeMirror modes */
+                            "!extensions/default/*/unittests.js",
+                            "extensions/default/*/**/*.js",
+                            "!extensions/extra/*/unittests.js",
+                            "extensions/extra/*/**/*.js",
+                            "!extensions/**/node_modules/**/*.js",
+                            "!extensions/**/test/**/*.js",
+                            "!**/unittest-files/**",
+                            "thirdparty/CodeMirror/addon/{,*/}*.js",
+                            "thirdparty/CodeMirror/keymap/{,*/}*.js",
+                            "thirdparty/CodeMirror/lib/{,*/}*.js",
+                            "thirdparty/CodeMirror/mode/{,*/}*.js",
+                            "thirdparty/CodeMirror/theme/{,*/}*.js",
+                            "thirdparty/slowparse/slowparse.js",
+                            "thirdparty/i18n/*.js",
+                            "thirdparty/text/*.js"
+                        ],
+                        dest: "dist/"
+                    }
+                ]
             },
             nls: {
-                files: [{
-                    expand: true,
-                    cwd: 'dist/nls',
-                    src: [ '**/*.js' ],
-                    dest: 'dist/nls'
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: "dist/nls",
+                        src: ["**/*.js"],
+                        dest: "dist/nls"
+                    }
+                ]
             }
         },
         copy: {
             dist: {
                 files: [
                     {
-                        'dist/index.html': 'src/.index.html'
+                        "dist/index.html": "src/.index.html"
                     },
                     /* static files */
                     {
                         expand: true,
-                        dest: 'dist/',
-                        cwd: 'src/',
+                        dest: "dist/",
+                        cwd: "src/",
                         src: [
-                            'nls/{,*/}*.js',
-                            'xorigin.js',
-                            'dependencies.js',
-                            'thirdparty/requirejs/require.js',
-                            'thirdparty/slowparse/locale/*',
-                            'thirdparty/github-markdown.css',
-                            'LiveDevelopment/launch.html',
-                            'hosted.*'
+                            "nls/{,*/}*.js",
+                            "xorigin.js",
+                            "dependencies.js",
+                            "thirdparty/requirejs/require.js",
+                            "thirdparty/slowparse/locale/*",
+                            "thirdparty/github-markdown.css",
+                            "LiveDevelopment/launch.html",
+                            "hosted.*"
                         ]
                     },
                     /* extensions and CodeMirror modes */
                     {
                         expand: true,
-                        dest: 'dist/',
-                        cwd: 'src/',
+                        dest: "dist/",
+                        cwd: "src/",
                         src: [
-                            'extensions/default/**/*',
-                            'extensions/extra/**/*',
-                            '!extensibility/node/spec/**',
-                            '!extensibility/node/node_modules/**/{test,tst}/**/*',
-                            '!extensibility/node/node_modules/**/examples/**/*',
-                            '!filesystem/impls/appshell/**/*',
-                            '!extensions/default/*/unittest-files/**/*',
-                            '!extensions/default/*/unittests.js',
-                            '!extensions/default/{*/thirdparty,**/node_modules}/**/test/**/*',
-                            '!extensions/default/{*/thirdparty,**/node_modules}/**/doc/**/*',
-                            '!extensions/default/{*/thirdparty,**/node_modules}/**/examples/**/*',
-                            '!extensions/default/*/thirdparty/**/*.htm{,l}',
-                            '!extensions/extra/*/unittest-files/**/*',
-                            '!extensions/extra/*/unittests.js',
-                            '!extensions/extra/{*/thirdparty,**/node_modules}/**/test/**/*',
-                            '!extensions/extra/{*/thirdparty,**/node_modules}/**/doc/**/*',
-                            '!extensions/extra/{*/thirdparty,**/node_modules}/**/examples/**/*',
-                            '!extensions/extra/*/thirdparty/**/*.htm{,l}',
-                            '!extensions/dev/*',
-                            '!extensions/samples/**/*',
-                            'thirdparty/CodeMirror/addon/{,*/}*',
-                            'thirdparty/CodeMirror/keymap/{,*/}*',
-                            'thirdparty/CodeMirror/lib/{,*/}*',
-                            'thirdparty/CodeMirror/mode/{,*/}*',
-                            '!thirdparty/CodeMirror/mode/**/*.html',
-                            '!thirdparty/CodeMirror/**/*test.js',
-                            'thirdparty/CodeMirror/theme/{,*/}*',
-                            'thirdparty/i18n/*.js',
-                            'thirdparty/text/*.js'
+                            "extensions/default/**/*",
+                            "extensions/extra/**/*",
+                            "!extensibility/node/spec/**",
+                            "!extensibility/node/node_modules/**/{test,tst}/**/*",
+                            "!extensibility/node/node_modules/**/examples/**/*",
+                            "!filesystem/impls/appshell/**/*",
+                            "!extensions/default/*/unittest-files/**/*",
+                            "!extensions/default/*/unittests.js",
+                            "!extensions/default/{*/thirdparty,**/node_modules}/**/test/**/*",
+                            "!extensions/default/{*/thirdparty,**/node_modules}/**/doc/**/*",
+                            "!extensions/default/{*/thirdparty,**/node_modules}/**/examples/**/*",
+                            "!extensions/default/*/thirdparty/**/*.htm{,l}",
+                            "!extensions/extra/*/unittest-files/**/*",
+                            "!extensions/extra/*/unittests.js",
+                            "!extensions/extra/{*/thirdparty,**/node_modules}/**/test/**/*",
+                            "!extensions/extra/{*/thirdparty,**/node_modules}/**/doc/**/*",
+                            "!extensions/extra/{*/thirdparty,**/node_modules}/**/examples/**/*",
+                            "!extensions/extra/*/thirdparty/**/*.htm{,l}",
+                            "!extensions/dev/*",
+                            "!extensions/samples/**/*",
+                            "thirdparty/CodeMirror/addon/{,*/}*",
+                            "thirdparty/CodeMirror/keymap/{,*/}*",
+                            "thirdparty/CodeMirror/lib/{,*/}*",
+                            "thirdparty/CodeMirror/mode/{,*/}*",
+                            "!thirdparty/CodeMirror/mode/**/*.html",
+                            "!thirdparty/CodeMirror/**/*test.js",
+                            "thirdparty/CodeMirror/theme/{,*/}*",
+                            "thirdparty/i18n/*.js",
+                            "thirdparty/text/*.js"
                         ]
                     },
                     /* styles, fonts and images */
                     {
                         expand: true,
-                        dest: 'dist/styles',
-                        cwd: 'src/styles',
-                        src: ['jsTreeTheme.css', 'fonts/{,*/}*.*', 'images/*', 'brackets.min.css*', 'bramble_overrides.css']
+                        dest: "dist/styles",
+                        cwd: "src/styles",
+                        src: [
+                            "jsTreeTheme.css",
+                            "fonts/{,*/}*.*",
+                            "images/*",
+                            "brackets.min.css*",
+                            "bramble_overrides.css"
+                        ]
                     }
                 ]
             },
@@ -179,24 +191,22 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        dest: 'src/thirdparty/CodeMirror',
-                        cwd: 'src/node_modules/codemirror',
+                        dest: "src/thirdparty/CodeMirror",
+                        cwd: "src/node_modules/codemirror",
                         src: [
-                            'addon/{,*/}*',
-                            'keymap/{,*/}*',
-                            'lib/{,*/}*',
-                            'mode/{,*/}*',
-                            'theme/{,*/}*',
+                            "addon/{,*/}*",
+                            "keymap/{,*/}*",
+                            "lib/{,*/}*",
+                            "mode/{,*/}*",
+                            "theme/{,*/}*"
                         ]
                     },
                     {
                         expand: true,
                         flatten: true,
-                        dest: 'src/thirdparty',
-                        cwd: 'src/node_modules',
-                        src: [
-                            'less/dist/less.min.js'
-                        ]
+                        dest: "src/thirdparty",
+                        cwd: "src/node_modules",
+                        src: ["less/dist/less.min.js"]
                     }
                 ]
             }
@@ -206,7 +216,7 @@ module.exports = function (grunt) {
                 force: true,
                 files: false
             },
-            src: ['dist/**/*'],
+            src: ["dist/**/*"]
         },
         less: {
             dist: {
@@ -238,8 +248,8 @@ module.exports = function (grunt) {
                     // Disable module loading timeouts, due to the size of what we load
                     waitSeconds: 0,
                     // `name` and `out` is set by grunt-usemin
-                    baseUrl: 'src',
-                    optimize: 'uglify2',
+                    baseUrl: "src",
+                    optimize: "uglify2",
                     // brackets.js should not be loaded until after polyfills defined in "utils/Compatibility"
                     // so explicitly include it in main.js
                     include: [
@@ -260,17 +270,17 @@ module.exports = function (grunt) {
             iframe: {
                 // Standalone dist/bramble.js iframe api
                 options: {
-                    name: 'thirdparty/almond',
-                    baseUrl: 'src',
-                    optimize: 'uglify2',
+                    name: "thirdparty/almond",
+                    baseUrl: "src",
+                    optimize: "uglify2",
                     preserveLicenseComments: false,
                     useStrict: true,
                     wrap: {
-                        startFile: 'src/bramble/client/bramble-start.frag',
-                        endFile: 'src/bramble/client/bramble-end.frag'
+                        startFile: "src/bramble/client/bramble-start.frag",
+                        endFile: "src/bramble/client/bramble-end.frag"
                     },
-                    include: ['bramble/client/main'],
-                    out: 'dist/bramble.js',
+                    include: ["bramble/client/main"],
+                    out: "dist/bramble.js",
                     uglify2: {}
                 }
             }
@@ -278,21 +288,21 @@ module.exports = function (grunt) {
         targethtml: {
             dist: {
                 files: {
-                    'src/.index.html': 'src/index.html'
+                    "src/.index.html": "src/index.html"
                 }
             }
         },
         useminPrepare: {
             options: {
-                dest: 'dist'
+                dest: "dist"
             },
-            html: 'src/.index.html'
+            html: "src/.index.html"
         },
         usemin: {
             options: {
-                dirs: ['dist']
+                dirs: ["dist"]
             },
-            html: ['dist/{,*/}*.html']
+            html: ["dist/{,*/}*.html"]
         },
         htmlmin: {
             dist: {
@@ -307,116 +317,113 @@ module.exports = function (grunt) {
                     removeEmptyAttributes: true,
                     removeOptionalTags: true*/
                 },
-                files: [{
-                    expand: true,
-                    cwd: 'src',
-                    src: '*.html',
-                    dest: 'dist'
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: "src",
+                        src: "*.html",
+                        dest: "dist"
+                    }
+                ]
             }
         },
-        meta : {
-            src   : [
-                'src/**/*.js',
-                '!src/thirdparty/**',
-                '!src/widgets/bootstrap-*.js',
-                '!src/extensions/**/unittest-files/**/*.js',
-                '!src/extensions/**/thirdparty/**/*.js',
-                '!src/extensions/dev/**',
-                '!src/extensions/extra/brackets-cdn-suggestions/**',
-                '!src/extensions/extra/HTMLHinter/**',
-                '!src/extensions/extra/MDNDocs/**',
-                '!src/bramble/thirdparty/EventEmitter/**',
-                '!src/bramble/thirdparty/MessageChannel/**',
-                '!src/extensions/disabled/**',
-                '!**/node_modules/**/*.js',
-                '!src/**/*-min.js',
-                '!src/**/*.min.js'
+        meta: {
+            src: [
+                "src/**/*.js",
+                "!src/thirdparty/**",
+                "!src/widgets/bootstrap-*.js",
+                "!src/extensions/**/unittest-files/**/*.js",
+                "!src/extensions/**/thirdparty/**/*.js",
+                "!src/extensions/dev/**",
+                "!src/extensions/extra/brackets-cdn-suggestions/**",
+                "!src/extensions/extra/HTMLHinter/**",
+                "!src/extensions/extra/MDNDocs/**",
+                "!src/bramble/thirdparty/EventEmitter/**",
+                "!src/bramble/thirdparty/MessageChannel/**",
+                "!src/extensions/disabled/**",
+                "!**/node_modules/**/*.js",
+                "!src/**/*-min.js",
+                "!src/**/*.min.js"
             ],
-            test : [
-                'test/**/*.js',
-                '!test/perf/*-files/**/*.js',
-                '!test/spec/*-files/**/*.js',
-                '!test/spec/*-known-goods/**/*.js',
-                '!test/spec/FindReplace-test-files-*/**/*.js',
-                '!test/smokes/**',
-                '!test/temp/**',
-                '!test/thirdparty/**',
-                '!test/**/node_modules/**/*.js'
+            test: [
+                "test/**/*.js",
+                "!test/perf/*-files/**/*.js",
+                "!test/spec/*-files/**/*.js",
+                "!test/spec/*-known-goods/**/*.js",
+                "!test/spec/FindReplace-test-files-*/**/*.js",
+                "!test/smokes/**",
+                "!test/temp/**",
+                "!test/thirdparty/**",
+                "!test/**/node_modules/**/*.js"
             ],
-            grunt: [
-                'Gruntfile.js',
-                'tasks/**/*.js'
-            ],
+            grunt: ["Gruntfile.js", "tasks/**/*.js"],
             /* specs that can run in phantom.js */
-            specs : [
-                'test/spec/CommandManager-test.js',
+            specs: [
+                "test/spec/CommandManager-test.js",
                 //'test/spec/LanguageManager-test.js',
                 //'test/spec/PreferencesManager-test.js',
-                'test/spec/ViewUtils-test.js'
+                "test/spec/ViewUtils-test.js"
             ]
         },
         watch: {
-            all : {
-                files: ['**/*', '!**/node_modules/**'],
-                tasks: ['eslint']
+            all: {
+                files: ["**/*", "!**/node_modules/**"],
+                tasks: ["eslint"]
             },
-            grunt : {
-                files: ['<%= meta.grunt %>', 'tasks/**/*'],
-                tasks: ['eslint:grunt']
+            grunt: {
+                files: ["<%= meta.grunt %>", "tasks/**/*"],
+                tasks: ["eslint:grunt"]
             },
-            src : {
-                files: ['<%= meta.src %>', 'src/**/*'],
-                tasks: ['eslint:src']
+            src: {
+                files: ["<%= meta.src %>", "src/**/*"],
+                tasks: ["eslint:src"]
             },
-            test : {
-                files: ['<%= meta.test %>', 'test/**/*'],
-                tasks: ['eslint:test']
+            test: {
+                files: ["<%= meta.test %>", "test/**/*"],
+                tasks: ["eslint:test"]
             }
         },
         /* FIXME (jasonsanjose): how to handle extension tests */
-        jasmine : {
-            src : 'undefined.js', /* trick the default runner to run without importing src files */
-            options : {
-                junit : {
-                    path: 'test/results',
+        jasmine: {
+            src: "undefined.js" /* trick the default runner to run without importing src files */,
+            options: {
+                junit: {
+                    path: "test/results",
                     consolidate: true
                 },
-                specs : '<%= meta.specs %>',
+                specs: "<%= meta.specs %>",
                 /* Keep in sync with test/SpecRunner.html dependencies */
-                vendor : [
+                vendor: [
                     // For reference to why this polyfill is needed see Issue #7951.
                     // The need for this should go away once the version of phantomjs gets upgraded to 2.0
-                    'test/polyfills.js',
+                    "test/polyfills.js",
 
-                    'src/thirdparty/jquery-2.1.3.min.js',
-                    'src/thirdparty/less.min.js'
+                    "src/thirdparty/jquery-2.1.3.min.js",
+                    "src/thirdparty/less.min.js"
                 ],
-                helpers : [
-                    'test/spec/PhantomHelper.js'
-                ],
-                template : require('grunt-template-jasmine-requirejs'),
+                helpers: ["test/spec/PhantomHelper.js"],
+                template: require("grunt-template-jasmine-requirejs"),
                 templateOptions: {
-                    requireConfig : {
-                        baseUrl: 'src',
+                    requireConfig: {
+                        baseUrl: "src",
                         paths: {
-                            'test' : '../test',
-                            'perf' : '../test/perf',
-                            'spec' : '../test/spec',
-                            'text' : 'thirdparty/text/text',
-                            'i18n' : 'thirdparty/i18n/i18n'
+                            test: "../test",
+                            perf: "../test/perf",
+                            spec: "../test/spec",
+                            text: "thirdparty/text/text",
+                            i18n: "thirdparty/i18n/i18n"
                         }
                     }
                 }
             }
         },
-        'jasmine_node': {
-            projectRoot: 'src/extensibility/node/spec/'
+        jasmine_node: {
+            projectRoot: "src/extensibility/node/spec/"
         },
         eslint: {
-            grunt:  '<%= meta.grunt %>',
-            src:    '<%= meta.src %>',
-            test:   '<%= meta.test %>',
+            grunt: "<%= meta.grunt %>",
+            src: "<%= meta.src %>",
+            test: "<%= meta.test %>",
             options: {
                 quiet: true
             }
@@ -427,99 +434,131 @@ module.exports = function (grunt) {
                     mode: "gzip"
                 },
                 expand: true,
-                cwd: 'dist/',
-                src: ['**/*'],
-                dest: 'dist/'
+                cwd: "dist/",
+                src: ["**/*"],
+                dest: "dist/"
             }
         },
 
         exec: {
-            localize: 'node scripts/properties2js',
-            'localize-dist': 'node scripts/properties2js dist',
-            'clean-nls': 'rm -fr src/nls && git checkout -- src/nls'
+            localize: "node scripts/properties2js",
+            "localize-dist": "node scripts/properties2js dist",
+            "clean-nls": "rm -fr src/nls && git checkout -- src/nls",
+            prettierjs: {
+                cmd: function() {
+                    var formatedOptions = Array.from(arguments).join(" ");
+                   
+                    return "prettier " + formatedOptions + " \"src/**/*.js\" > ./prettier.out.txt 2> prettier.errors.txt ";
+                },
+                    env: (function(){
+                        var m = grunt.template.process("<%= meta.src %>").replace(/,/g,':').replace(/\!/g,'');
+                        m = m.slice(m.indexOf(':')+1);
+                        return Object.assign({}, {'GLOBIGNORE': m});  
+                    })()
+                
+            }, 
+            "clean-tmps": "rm ./prettier.out.txt ./prettier.errors.txt" 
         },
 
         swPrecache: {
             dist: {
-                rootDir: 'dist'
+                rootDir: "dist"
             }
         }
     });
 
-    grunt.registerMultiTask('swPrecache', function() {
+    grunt.registerMultiTask("swPrecache", function() {
         var done = this.async();
         var rootDir = this.data.rootDir;
-        var files =  (function() {
-            return (require('./sw-cache-file-list.json')).files;
-        }());
+        var files = (function() {
+            return require("./sw-cache-file-list.json").files;
+        })();
 
         var config = {
-            cacheId: 'bramble',
+            cacheId: "bramble",
             logger: grunt.log.writeln,
             staticFileGlobs: files,
-            stripPrefix: 'dist/',
+            stripPrefix: "dist/",
             ignoreUrlParametersMatching: [/./]
         };
 
-        swPrecache.write(Path.join(rootDir, 'bramble-sw.js'), config, function(err) {
-            if(err) {
-                grunt.fail.warn(err);
+        swPrecache.write(
+            Path.join(rootDir, "bramble-sw.js"),
+            config,
+            function(err) {
+                if (err) {
+                    grunt.fail.warn(err);
+                }
+                done();
             }
-            done();
-        });
+        );
     });
 
     // task: install
-    grunt.registerTask('install', ['write-config', 'less', 'npm-install-source']);
+    grunt.registerTask("install", [
+        "write-config",
+        "less",
+        "npm-install-source"
+    ]);
 
     // task: test
-    grunt.registerTask('test', ['eslint', 'jasmine', 'nls-check']);
-//    grunt.registerTask('test', ['eslint', 'jasmine', 'jasmine_node', 'nls-check']);
+    grunt.registerTask("test", ["eslint", "jasmine", "nls-check"]);
+    //    grunt.registerTask('test', ['eslint', 'jasmine', 'jasmine_node', 'nls-check']);
 
     // task: set-release
     // Update version number in package.json and rewrite src/config.json
-    grunt.registerTask('set-release', ['update-release-number', 'write-config']);
+    grunt.registerTask("set-release", [
+        "update-release-number",
+        "write-config"
+    ]);
 
     // task: build
-    grunt.registerTask('build', [
-        'eslint:src',
-        'clean',
-        'less',
-        'targethtml',
-        'useminPrepare',
-        'htmlmin',
-        'exec:localize',
-        'requirejs:dist',
-        'concat',
+    grunt.registerTask("build", [
+        "eslint:src",
+        "clean",
+        "less",
+        "targethtml",
+        "useminPrepare",
+        "htmlmin",
+        "exec:localize",
+        "requirejs:dist",
+        "concat",
         /*'cssmin',*/
         /*'uglify',*/
-        'copy:dist',
+        "copy:dist",
         /* XXXBramble: we skip this, since we don't use any of the node_modules in Bramble.
          'npm-install', */
-        'cleanempty',
-        'exec:clean-nls',
-        'usemin',
-        'build-config'
+        "cleanempty",
+        "exec:clean-nls",
+        "usemin",
+        "build-config"
     ]);
 
     // task: build dist/ for browser
-    grunt.registerTask('build-browser', [
-        'build',
-        'requirejs:iframe',
-        'exec:localize-dist',
-        'uglify'
+    grunt.registerTask("build-browser", [
+        "build",
+        "requirejs:iframe",
+        "exec:localize-dist",
+        "uglify"
     ]);
 
     // task: build dist/ for browser, pre-compressed with gzip and SW precache
-    grunt.registerTask('build-browser-compressed', [
-        'build-browser',
-        'compress',
-        'swPrecache'
+    grunt.registerTask("build-browser-compressed", [
+        "build-browser",
+        "compress",
+        "swPrecache"
     ]);
 
     // task: undo changes to the src/nls directory
-    grunt.registerTask('unlocalize', ['exec:clean-nls']);
+    grunt.registerTask("unlocalize", ["exec:clean-nls"]);
 
     // Default task.
-    grunt.registerTask('default', ['test']);
+    grunt.registerTask("default", ["test"]);
+
+    // task: run prettier on all of the .js files in src and test
+    grunt.registerTask("prettierjs", [
+        //"exec:options",        
+        "exec:prettierjs:--write:--tab-width=4:--bracket-spacing=false",
+        // comment this line to see the output of prettier, files: prettier.out.txt and prettier.errors.txt
+    ]);
 };
